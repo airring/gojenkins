@@ -205,6 +205,18 @@ func (j *Job) GetBuildsFields(ctx context.Context, fields []string, custom inter
 	return nil
 }
 
+func (j *Job) GetBuildsview(ctx context.Context, id string) (*Job, error) {
+	views := Job{Jenkins: j, Raw: new(JobResponse), Base: jobURL + "/view/" + id + "builds")}
+	status, err := views.Poll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if status == 200 {
+		return &views, nil
+	}
+	return nil, errors.New(strconv.Itoa(status))
+}
+
 // Returns All Builds with Number and URL
 func (j *Job) GetAllBuildIds(ctx context.Context) ([]JobBuild, error) {
 	var buildsResp struct {
@@ -276,6 +288,8 @@ func (j *Job) GetInnerJobs(ctx context.Context) ([]*Job, error) {
 	}
 	return jobs, nil
 }
+
+
 
 func (j *Job) Enable(ctx context.Context) (bool, error) {
 	resp, err := j.Jenkins.Requester.Post(ctx, j.Base+"/enable", nil, nil, nil)
