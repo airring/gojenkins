@@ -205,7 +205,7 @@ func (j *Job) GetBuildsFields(ctx context.Context, fields []string, custom inter
 	return nil
 }
 
-func (j *Job) GetBuildsview(ctx context.Context, id string) (*Job, error) {
+func (j *Job) GetBuildsview(ctx context.Context, id string) (interface{}, error) {
 	views := Job{Jenkins: j, Raw: new(JobResponse), Base: jobURL + "/view/" + id + "builds")}
 	status, err := views.Poll(ctx)
 	if err != nil {
@@ -265,7 +265,7 @@ func (j *Job) GetDownstreamJobs(ctx context.Context) ([]*Job, error) {
 	return jobs, nil
 }
 
-func (j *Job) GetInnerJob(ctx context.Context, id string) (*Job, error) {
+func (j *Job) GetInnerJob(ctx context.Context, id string) (*ViewData, error) {
 	job := Job{Jenkins: j.Jenkins, Raw: new(JobResponse), Base: j.Base + "/job/" + id}
 	status, err := job.Poll(ctx)
 	if err != nil {
